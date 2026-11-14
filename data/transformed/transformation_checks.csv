@@ -1,0 +1,6 @@
+check,passed
+All daily FX observations counted,True
+Export row count preserved,True
+"Export keys, amounts and flags preserved",True
+No unmatched FX months,True
+Main table has the complete monthly calendar,True
