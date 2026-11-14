@@ -7,7 +7,8 @@ Data wrangling for the group project: how monthly changes in the USD/CAD exchang
 ```
 ├── data/
 │   ├── raw/      original downloads (never edited)
-│   └── clean/    clean tables written by Part 2 of the notebook
+│   ├── clean/    clean tables and quality log written by Part 2
+│   └── transformed/   monthly tables and validation results written by Part 3
 ├── notebooks/
 │   └── milestone2_pipeline.ipynb   shared notebook, one part per group member
 ├── docs/
@@ -18,22 +19,44 @@ Data wrangling for the group project: how monthly changes in the USD/CAD exchang
 └── setup.bat                       one-click setup on Windows (uv)
 ```
 
-## Notebook parts
+## Project parts
 
 | Part | Content | Owner |
 |---|---|---|
+| Part 1 | Data dictionary and metadata | Rita |
 | Part 2 | Data quality checks and cleaning | Rui |
-| Part 3 | Data transformation and integration | |
-| Part 4 | Prepared dataset and data storage | |
-| Part 5 | How the prepared data supports the research questions | |
+| Part 3 | Data transformation and integration | Daisy |
+| Part 4 | Prepared dataset and data storage | Emily |
+| Part 5 | How the prepared data supports the research questions | Helen |
 
 Part 2 leaves two tables in memory for later parts: `exports_clean` (monthly, long format) and `fx_daily_clean` (daily). They are also saved in `data/clean/`.
+
+## Part 3 outputs: which file to use
+
+Start with [analysis_monthly.csv](data/transformed/analysis_monthly.csv) for all three research questions. Each row is one month of U.S.-bound energy exports (C12), from January 2018 through December 2025. Export values are in **thousands of current CAD**; the exchange rate is **CAD per USD**, so a higher rate means a weaker Canadian dollar.
+
+| Question | Columns to use | Available observations |
+|---|---|---|
+| Q1: How did the Canadian dollar move? | `usd_cad_monthly_avg`, `fx_mom_pct` | 96 monthly averages; 95 monthly changes |
+| Q2: How did energy export values change? | `export_value_cad_k`, `exports_yoy_pct` | 96 monthly values; 84 year-over-year changes |
+| Q3: Did their monthly changes move together? | `fx_mom_pct`, `exports_mom_pct` where `mom_pair_available` is true | 95 paired changes |
+
+Changes are expressed as percentages (`2.5` means 2.5%). A change without a comparison month is blank, not zero. Annual trade figures, if cited, are background only and are not joined to the monthly table.
+
+Other files in `data/transformed/`:
+
+- [fx_monthly.csv](data/transformed/fx_monthly.csv): 96 monthly means, with the number of published daily rates used in each mean.
+- [exports_monthly.csv](data/transformed/exports_monthly.csv): 768 rows covering C12 and seven product subgroups. Use the subgroups to examine composition; adding them to C12 would count exports twice.
+- [transformation_checks.csv](data/transformed/transformation_checks.csv): the five internal checks on observation counts, preservation of export records, FX matches and month coverage. Comparison against the Bank of Canada's official monthly series (`FXMUSDCAD`) is still pending.
+
+**Interpretation:** A shipment worth USD 7,000 converts to CAD 9,100 at 1.30 CAD/USD and CAD 9,800 at 1.40, even if the USD price and quantity are unchanged. A correlation with CAD export value can therefore reflect currency conversion. The data alone cannot separate this from changes in energy prices, quantities or product mix.
 
 ## How to run
 
 1. Set up the environment: double-click `setup.bat` (uv), or run `pip install -r requirements.txt`.
 2. Open `notebooks/milestone2_pipeline.ipynb` in VS Code or Jupyter, select the project's Python environment as the kernel, and click **Run All**.
-3. Only needed for MotherDuck: copy `.env.example` to `.env` and paste your own token.
+3. To rerun Part 3 separately, run Part 2 first in the same kernel, then run cells 3.1–3.6 in order. Part 3 reads `exports_clean` and `fx_daily_clean`, averages published daily rates by month, and joins one monthly rate to the export records for that month. It writes the four CSVs to `data/transformed/`. You can also open those CSVs directly without running the notebook.
+4. The default CSV workflow needs no MotherDuck token. Only for MotherDuck access, copy `.env.example` to `.env` and paste your own token.
 
 ## Working together on the notebook
 
