@@ -47,7 +47,7 @@ Other files in `data/transformed/`:
 
 - [fx_monthly.csv](data/transformed/fx_monthly.csv): 96 monthly means, with the number of published daily rates used in each mean.
 - [exports_monthly.csv](data/transformed/exports_monthly.csv): 768 rows covering C12 and seven product subgroups. Use the subgroups to examine composition; adding them to C12 would count exports twice.
-- [transformation_checks.csv](data/transformed/transformation_checks.csv): the five internal checks on observation counts, preservation of export records, FX matches and month coverage. Comparison against the Bank of Canada's official monthly series (`FXMUSDCAD`) is still pending.
+- [transformation_checks.csv](data/transformed/transformation_checks.csv): the five internal checks on observation counts, preservation of export records, FX matches and month coverage.
 
 **Interpretation:** A shipment worth USD 7,000 converts to CAD 9,100 at 1.30 CAD/USD and CAD 9,800 at 1.40, even if the USD price and quantity are unchanged. A correlation with CAD export value can therefore reflect currency conversion. The data alone cannot separate this from changes in energy prices, quantities or product mix.
 
